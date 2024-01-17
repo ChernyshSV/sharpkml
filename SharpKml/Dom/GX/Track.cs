@@ -116,6 +116,14 @@ namespace SharpKml.Dom.GX
         }
 
         /// <summary>
+        /// Adds the specified value to <see cref="WhenElements"/>.</summary>
+        /// <param name="element">The value to add.</param>
+        public void AddWhen(WhenElement element)
+        {
+            this.AddAsChild(this.WhenElements, element);
+        }
+
+        /// <summary>
         /// Processes the &lt;gx:angles&gt;, &lt;gx:coord&gt; and &lt;when&gt;
         /// elements.
         /// </summary>
@@ -138,11 +146,6 @@ namespace SharpKml.Dom.GX
         private void Add(CoordElement element)
         {
             this.AddAsChild(this.CoordElements, element);
-        }
-
-        private void Add(WhenElement element)
-        {
-            this.AddAsChild(this.WhenElements, element);
         }
 #pragma warning restore IDE0051 // Remove unused private members
 
@@ -174,6 +177,43 @@ namespace SharpKml.Dom.GX
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Used to correctly serialize the strings in When.
+        /// </summary>
+        public class WhenElement : Element, ICustomElement
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="WhenElement"/> class.
+            /// </summary>
+            /// <param name="value">
+            /// The value to set the <see cref="Element.InnerText"/> to.
+            /// </param>
+            public WhenElement(DateTime value)
+            {
+                this.Value = value;
+            }
+
+            /// <summary>
+            /// Gets a value indicating whether to process the children of the Element.
+            /// </summary>
+            public bool ProcessChildren => false;
+
+            /// <summary>
+            /// Gets the value passed into the constructor.
+            /// </summary>
+            public DateTime Value { get; }
+
+            /// <summary>
+            /// Writes the start of an XML element.
+            /// </summary>
+            /// <param name="writer">An <see cref="XmlWriter"/> to write to.</param>
+            public void CreateStartElement(XmlWriter writer)
+            {
+                string elementValue = KmlFormatter.Instance.Format(null, this.Value, null);
+                writer.WriteElementString("when", KmlNamespaces.Kml22Namespace, elementValue);
+            }
         }
 
         /// <summary>
@@ -326,43 +366,6 @@ namespace SharpKml.Dom.GX
                 }
 
                 return default;
-            }
-        }
-
-        /// <summary>
-        /// Used to correctly serialize the strings in When.
-        /// </summary>
-        internal class WhenElement : Element, ICustomElement
-        {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="WhenElement"/> class.
-            /// </summary>
-            /// <param name="value">
-            /// The value to set the <see cref="Element.InnerText"/> to.
-            /// </param>
-            public WhenElement(DateTime value)
-            {
-                this.Value = value;
-            }
-
-            /// <summary>
-            /// Gets a value indicating whether to process the children of the Element.
-            /// </summary>
-            public bool ProcessChildren => false;
-
-            /// <summary>
-            /// Gets the value passed into the constructor.
-            /// </summary>
-            public DateTime Value { get; }
-
-            /// <summary>
-            /// Writes the start of an XML element.
-            /// </summary>
-            /// <param name="writer">An <see cref="XmlWriter"/> to write to.</param>
-            public void CreateStartElement(XmlWriter writer)
-            {
-                string elementValue = KmlFormatter.Instance.Format(null, this.Value, null);
-                writer.WriteElementString("when", KmlNamespaces.Kml22Namespace, elementValue);
             }
         }
     }
