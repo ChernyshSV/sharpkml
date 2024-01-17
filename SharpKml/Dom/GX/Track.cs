@@ -76,14 +76,16 @@ namespace SharpKml.Dom.GX
         /// </summary>
         public IEnumerable<DateTime> When => this.WhenElements.Select(e => e.Value);
 
+        /// <summary>
+        /// Gets a collection of time values that corresponds to a position.
+        /// </summary>
+        [KmlElement(null, 2)]
+        public List<WhenElement> WhenElements { get; } = new List<WhenElement>();
         [KmlElement(null, 4)]
         private List<AnglesElement> AngleElements { get; } = new List<AnglesElement>();
 
         [KmlElement(null, 3)]
         private List<CoordElement> CoordElements { get; } = new List<CoordElement>();
-
-        [KmlElement(null, 2)]
-        private List<WhenElement> WhenElements { get; } = new List<WhenElement>();
 
         /// <summary>
         /// Adds the specified value to <see cref="Angles"/>.</summary>
@@ -201,9 +203,9 @@ namespace SharpKml.Dom.GX
             public bool ProcessChildren => false;
 
             /// <summary>
-            /// Gets the value passed into the constructor.
+            /// Gets or sets the value passed into the constructor.
             /// </summary>
-            public DateTime Value { get; }
+            public DateTime Value { get; set; }
 
             /// <summary>
             /// Writes the start of an XML element.
